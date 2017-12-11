@@ -16,9 +16,6 @@ def add_impedence(G_proj):
         data['impedance'] = impedance(data['length'], data['grade_abs'])
         data['rise'] = data['length'] * data['grade']
 
-def heuristic(G_proj, a, b):
-    return abs(G_proj.nodes[a]['elevation'] - G_proj.nodes[b]['elevation'])
-
 def getelevationcost(G_proj, a, b):
     return (G_proj.nodes[a]['elevation'] - G_proj.nodes[b]['elevation'])
 
@@ -53,6 +50,12 @@ def getTotalLength(G_proj, route):
          cost += getcost(G_proj, route[i], route[i+1])
     return cost
 
+def print_route_stats(G_proj, route):
+    route_lengths = ox.get_route_edge_attributes(G_proj, route, 'length')
+    print('Total trip distance: {:,.0f} meters'.format(getTotalLength(G_proj, route)))
+    print('Total elevation change: {:,.0f}'.format(getTotalElevation(G_proj, route)))
+
+#Algorithm to get Shortest length / Elevation path
 def get_shortest_path(graph, source=0, target=0, weight='length'):
     frontier = []
     heappush(frontier, (0, source))
@@ -80,6 +83,7 @@ def get_shortest_path(graph, source=0, target=0, weight='length'):
                 came_from[next] = current
     return getpath(came_from, source, target)
 
+#Strategy1
 def dijkstra_search(graph, start, goal, viablecost, mode='minimize'):
     frontier = []
     heappush(frontier, (0, start))
@@ -110,21 +114,8 @@ def dijkstra_search(graph, start, goal, viablecost, mode='minimize'):
                 came_from[next] = current
     return getpath(came_from, start, goal)
 
-def print_route_stats(G_proj, route):
-    #route_grades = ox.get_route_edge_attributes(G_proj, route, 'grade_abs')
-    #msg = 'The average grade is {:.1f}% and the max is {:.1f}%'
-    #print(msg.format(np.mean(route_grades)*100, np.max(route_grades)*100))
 
-    #route_rises = ox.get_route_edge_attributes(G_proj, route, 'rise')
-    #ascent = np.sum([rise for rise in route_rises if rise >= 0])
-    #descent = np.sum([rise for rise in route_rises if rise < 0])
-    #msg = 'Total elevation change is {:.0f} meters: a {:.0f} meter ascent and a {:.0f} meter descent'
-    #print(msg.format(np.sum(route_rises), ascent, abs(descent)))
-
-    route_lengths = ox.get_route_edge_attributes(G_proj, route, 'length')
-    print('Total trip distance: {:,.0f} meters'.format(getTotalLength(G_proj, route)))
-    print('Total elevation change: {:,.0f}'.format(getTotalElevation(G_proj, route)))
-
+#Strategy2
 def dfs_get_all_paths(graph, start, goal, maxlength):
     paths = []
     def dfs(current, le, currentpath, visited):
@@ -161,7 +152,7 @@ def dfs_get_all_paths(graph, start, goal, maxlength):
             max_path = path
     return min_path, max_path
 
-
+#Strategy3
 def dfs_get_all_paths_2(G_proj, origin, destination, can_travel, cutoff):
     paths = list(nx.all_simple_paths(G_proj, source=origin, target=destination, cutoff=cutoff))
     minval = sys.maxsize
@@ -177,107 +168,5 @@ def dfs_get_all_paths_2(G_proj, origin, destination, can_travel, cutoff):
             maxval = elevationData
             max_path = path
     return min_path, max_path
-
-
-# def k_shortest_paths(G, source, target, k=1, weight='weight'):
-#     """Returns the k-shortest paths from source to target in a weighted graph G.
-#     Parameters
-#     ----------
-#     G : NetworkX graph
-#     source : node
-#        Starting node
-#     target : node
-#        Ending node
-#
-#     k : integer, optional (default=1)
-#         The number of shortest paths to find
-#     weight: string, optional (default='weight')
-#        Edge data key corresponding to the edge weight
-#     Returns
-#     -------
-#     lengths, paths : lists
-#        Returns a tuple with two lists.
-#        The first list stores the length of each k-shortest path.
-#        The second list stores each k-shortest path.
-#     Raises
-#     ------
-#     NetworkXNoPath
-#        If no path exists between source and target.
-#     Examples
-#     --------
-#     G=nx.complete_graph(5)
-#     print(k_shortest_paths(G, 0, 4, 4))
-#     ([1, 2, 2, 2], [[0, 4], [0, 1, 4], [0, 2, 4], [0, 3, 4]])
-#     Notes
-#     ------
-#     Edge weight attributes must be numerical and non-negative.
-#     Distances are calculated as sums of weighted edges traversed.
-#     """
-#     if source == target:
-#         return ([0], [[source]])
-#     #import pdb; pdb.set_trace()
-#     #length, path = nx.single_source_dijkstra(G, source, target, weight=weight)
-#     length, path = nx.single_source_dijkstra(G, source, None, weight=weight)
-#     if target not in length:
-#         raise nx.NetworkXNoPath("node %s not reachable from %s" % (source, target))
-#
-#     lengths = [length[target]]
-#     paths = [path[target]]
-#     c = count()
-#     B = []
-#     G_original = G.copy()
-#
-#     for i in range(1, k):
-#         for j in range(len(paths[-1]) - 1):
-#             spur_node = paths[-1][j]
-#             root_path = paths[-1][:j + 1]
-#
-#             edges_removed = []
-#             for c_path in paths:
-#                 if len(c_path) > j and root_path == c_path[:j + 1]:
-#                     u = c_path[j]
-#                     v = c_path[j + 1]
-#                     if G.has_edge(u, v):
-#                         #edge_attr = G.edge[u][v]
-#                         edge_attr = G[u][v]
-#                         G.remove_edge(u, v)
-#                         edges_removed.append((u, v, edge_attr))
-#
-#             for n in range(len(root_path) - 1):
-#                 node = root_path[n]
-#                 # out-edges
-#                 for u, v, edge_attr in G.edges_iter(node, data=True):
-#                     G.remove_edge(u, v)
-#                     edges_removed.append((u, v, edge_attr))
-#
-#                 if G.is_directed():
-#                     # in-edges
-#                     for u, v, edge_attr in G.in_edges_iter(node, data=True):
-#                         G.remove_edge(u, v)
-#                         edges_removed.append((u, v, edge_attr))
-#
-#             spur_path_length, spur_path = nx.single_source_dijkstra(G, spur_node, target, weight=weight)
-#             if target in spur_path and spur_path[target]:
-#                 total_path = root_path[:-1] + spur_path[target]
-#                 total_path_length = get_path_length(G_original, root_path, weight) + spur_path_length[target]
-#                 heappush(B, (total_path_length, next(c), total_path))
-#
-#             for e in edges_removed:
-#                 u, v, edge_attr = e
-#                 G.add_edge(u, v, edge_attr)
-#
-#         if B:
-#             (l, _, p) = heappop(B)
-#             lengths.append(l)
-#             paths.append(p)
-#         else:
-#             break
-#
-#     return (lengths, paths)
-
-
-
-
-
 
 
