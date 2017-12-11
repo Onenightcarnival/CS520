@@ -5,7 +5,9 @@ from heapq import *
 from itertools import count
 import time
 from model import *
-import cPickle as pkl
+#import cPickle as pkl
+import _pickle as pkl
+import time
 
 ox.config(log_console=True, use_cache=True)
 
@@ -70,7 +72,7 @@ def plot_results_from_dict(dic, plot_one=False, key_one=None):
             x_axis = np.arange(len(dic[key]))
             break
     fig, ax = plt.subplots()
-    print dic
+    #print dic
     for key in dic.keys():
         if key != "MAX":
             assert len_1 == len(dic[key])
@@ -165,8 +167,8 @@ def compare_algorithms(G, G_proj, origin_lat_long, bbox_lat_long, bbox_dist, num
         len_t = len(dic["Modified_Dijkstra"])
         for each in dic.keys():
             if len_t != len(dic[each]):
-                print each
-                print len(dic[each])
+                #print each
+                #print len(dic[each])
                 assert len_t == len(dic[each])
 
         shortest.append(total_actual)
@@ -193,56 +195,69 @@ def compare_algorithms(G, G_proj, origin_lat_long, bbox_lat_long, bbox_dist, num
                 plot_results_from_dict(temp_dict, True, each)
 
 
+
+
 G_proj, G = get_map()
 
-compare_algorithms(G, G_proj, origin_lat_long=[37.772, -122.434], bbox_lat_long=(37.772, -122.434),
-                   bbox_dist=500, num_dest=5, extrapercent_travel=10, plot=True)
+#Taking input
+origin_lat = input("Please enter the Latitude of the Origin \n")
+origin_long = input("Please enter the Longitude of the Origin \n")
+print("Latitude of origin : ", float(origin_lat), " and Longitude of origin", float(origin_long))
+dest_lat = input("Please enter the Latitude of the Destination \n")
+dest_long = input("Please enter the Longitude of the Destination \n")
+print("Latitude of destination : ", float(dest_lat), " and Longitude of destination", float(dest_long))
+extra_travel = float(input("Please enter the percentage of shortest path between above points that you are willing to travel extra \n"))
+print("x% : ", extra_travel)
+mode = input("To minimize elevation, please type 'minimize' \n To maximize elevation, please type 'maximize'")
 
+#compare_algorithms(G, G_proj, origin_lat_long=[37.772, -122.434], bbox_lat_long=(37.772, -122.434), bbox_dist=500, num_dest=5, extrapercent_travel=10, plot=True)
 
-# # Enter Latitude and Longitude to select origin and destination
-# origin = ox.get_nearest_node(G, (37.77, -122.426))
-# destination = ox.get_nearest_node(G, (37.773, -122.441))
-#
-# # Enter the percentage you want to travel extra
-# extra_travel = 10
-# bbox = ox.bbox_from_point((37.772, -122.434), distance=1500, project_utm=True)
-#
-# shortest_path = get_shortest_path(G_proj, source=origin, target=destination, weight='length')
-# print("Printing Statistics of Shortest path route")
-# print(shortest_path)
-# print_route_stats(G_proj, shortest_path)
-#
-# shortest_elevation_path = get_shortest_path(G_proj, source=origin, target=destination, weight='elevation')
-# print("Printing Statistics of Shortest Elevation path route")
-# print_route_stats(G_proj, shortest_elevation_path)
-#
-# shortest_path_length = getTotalLength(G_proj, shortest_path)
-# can_travel = ((100.0 + extra_travel)*shortest_path_length)/100.0
-# print("Extra travel: ", can_travel)
-#
-# #Strategy1
-# #As of now, maximize is not working properly, please dont use
-# route_minimize_elevation1 = dijkstra_search(G_proj, origin, destination, can_travel, mode='maximize')
-# print("Printing Statistics of our algorithm's minimum Elevation route")
-# print_route_stats(G_proj, route_minimize_elevation1)
-#
-# #Strategy2
-# import time
-# t = time.time()
-# route_minimize_elevation2, route_maximize_elevation2 = dfs_get_all_paths(G_proj, origin, destination, can_travel)
-# print ("Srikanth's algo time:", time.time()-t)
-# print("Printing Statistics of Minimum Elevation route")
-# print_route_stats(G_proj, route_minimize_elevation2)
-# print("Printing Statistics of Maximum Elevation route")
-# print_route_stats(G_proj, route_maximize_elevation2)
-#
-# #Strategy3
-# route_minimize_elevation3, route_maximize_elevation3 = dfs_get_all_paths_2(G_proj, origin, destination, can_travel, len(shortest_path)+4)
-# print("Printing Statistics of Minimum Elevation route")
-# print_route_stats(G_proj, route_minimize_elevation3)
-# print("Printing Statistics of Maximum Elevation route")
-# print_route_stats(G_proj, route_maximize_elevation3)
-#
+# Enter Latitude and Longitude to select origin and destination
+origin = ox.get_nearest_node(G, (float(origin_lat), float(origin_long))) #(37.77, -122.426))
+destination = ox.get_nearest_node(G, (float(dest_lat), float(dest_long))) #(37.773, -122.441))
+
+#Enter the percentage you want to travel extra
+bbox = ox.bbox_from_point((float(origin_lat), float(origin_long)), distance=1500, project_utm=True)
+
+shortest_path = get_shortest_path(G_proj, source=origin, target=destination, weight='length')
+print("Printing Statistics of Shortest path route")
+#print(shortest_path)
+print_route_stats(G_proj, shortest_path)
+
+shortest_path_length = getTotalLength(G_proj, shortest_path)
+can_travel = ((100.0 + extra_travel)*shortest_path_length)/100.0
+print("Distance you are willing to travel : ", can_travel)
+
+shortest_ele_path = get_shortest_path(G_proj, source=origin, target=destination, weight='elevation')
+print("Printing Statistics of Shortest elevation path route")
+#print(shortest_ele_path)
+print_route_stats(G_proj, shortest_ele_path)
+
+#Strategy1
+t = time.time()
+route_minimize_elevation1 = dijkstra_search(G_proj, origin, destination, can_travel, mode='minimize')
+print ("Algorithm 1 took :", time.time()-t, " seconds")
+print("Printing Statistics of our algorithm's minimum Elevation route")
+print_route_stats(G_proj, route_minimize_elevation1)
+
+#Strategy2
+t = time.time()
+route_minimize_elevation2, route_maximize_elevation2 = dfs_get_all_paths(G_proj, origin, destination, can_travel)
+print ("Algorithm 2 took :", time.time()-t, " seconds")
+print("Printing Statistics of Minimum Elevation route")
+print_route_stats(G_proj, route_minimize_elevation2)
+print("Printing Statistics of Maximum Elevation route")
+print_route_stats(G_proj, route_maximize_elevation2)
+
+#Strategy3
+t = time.time()
+route_minimize_elevation3, route_maximize_elevation3 = dfs_get_all_paths_2(G_proj, origin, destination, can_travel, len(shortest_path)+4)
+print ("Algorithm 3 took :", time.time()-t, " seconds")
+print("Printing Statistics of Minimum Elevation route")
+print_route_stats(G_proj, route_minimize_elevation3)
+print("Printing Statistics of Maximum Elevation route")
+print_route_stats(G_proj, route_maximize_elevation3)
+
 # #Strategy4
 # #route_by_impedance = nx.shortest_path(G_proj, source=origin, target=destination, weight='impedance')
 # #fig, ax = ox.plot_graph_route(G_proj, route_by_length, bbox=bbox, node_size=0)
