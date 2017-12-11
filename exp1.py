@@ -246,7 +246,3 @@ compare_algorithms(G, G_proj, origin_lat_long=[37.772, -122.434], bbox_lat_long=
 # #Strategy4
 # #route_by_impedance = nx.shortest_path(G_proj, source=origin, target=destination, weight='impedance')
 # #fig, ax = ox.plot_graph_route(G_proj, route_by_length, bbox=bbox, node_size=0)
-# '''
-# #kpaths = k_shortest_paths(G_proj, source=origin,target=destination,k = 5,weight='length')
-# #print (kpaths)
-# '''
