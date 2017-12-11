@@ -1,6 +1,6 @@
 # EleNa: Elevation-based Navigation
 
-Navigation systems try to get the shortest or the fastest path from one point to another. However, in some cases we would like to further customize the way in which we travel. If you are working out, maybe you want to maximize the elevation or use the path with the least elevation changes. The EleNa project tries to find the best path between two points according to the user preferences. The user selects an origin and a destination and the amount of extra distance that he/she is willing to travel to either reduce or maximize the elevation gain.
+The usual Navigation System tries to get the shortest or the fastest path from one point to another. However, in some cases, having the ability to further customize the path is desirable. Such a case could arise if, while working out, following a path that maximizes or minimizes the elevation gain is more convenient than the usual shortest path in order to get better training results. Therefore, the EleNa project tries to find the best path between two points according to the user preferences regarding elevation gain and some distance constraint with respect to the shortest path.
 
 ## Getting Started
 
@@ -48,4 +48,3 @@ We use [Git](https://git-scm.com/) for versioning.
 ## Authors
 
 See also the list of [contributors](https://github.com/clankster99/CS520/settings/collaboration) who participated in this project.
-
