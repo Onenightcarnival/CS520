@@ -5,14 +5,14 @@ The usual Navigation System tries to get the shortest or the fastest path from o
 ## Getting Started
 
 Simply clone the following repository to your local machine:
-Simply access the following cloud:
+
 ```
 git clone https://github.com/clankster99/CS520.git
 ```
 
 ### Prerequisites
 
-You need to have either python 2.x or 3.x installed in your computer. Also, the osmnx library is needed:
+You need to have installed python 2.7. Also, the OSMnx library is needed:
 
 ```
 pip install osmnx
