@@ -7,7 +7,7 @@ Navigation systems try to get the shortest or the fastest path from one point to
 Simply clone the following repository to your local machine:
 Simply access the following cloud:
 ```
-git clone theRepository.git
+git clone https://github.com/clankster99/CS520.git
 ```
 
 ### Prerequisites
@@ -43,9 +43,9 @@ Explain how to run tests (or the graphs maybe)
 
 ## Versioning
 
-We use [Git](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
+We use [Git](https://git-scm.com/) for versioning. 
 
 ## Authors
 
-See also the list of [contributors](urlOfTheContributorsToTheRepository) who participated in this project.
+See also the list of [contributors](https://github.com/clankster99/CS520/settings/collaboration) who participated in this project.
 
