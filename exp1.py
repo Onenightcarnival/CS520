@@ -9,30 +9,32 @@ import cPickle as pkl
 
 ox.config(log_console=True, use_cache=True)
 
+
 def get_map(place='San Francisco', newPlace=False):
-    if newPlace==False:
-        return pkl.load(open("graph_projected.pkl","rb")), pkl.load(open("graph.pkl","rb"))
-    
-    #Downloading Local map
+    if newPlace == False:
+        return pkl.load(open("graph_projected.pkl", "rb")), pkl.load(open("graph.pkl", "rb"))
+
+    # Downloading Local map
     place = 'San Francisco'
-    place_query = {'city':'San Francisco', 'state':'California', 'country':'USA'}
+    place_query = {'city': 'San Francisco', 'state': 'California', 'country': 'USA'}
     G = ox.graph_from_place(place_query, network_type='drive')
 
-    #Adding Elevation data from GoogleMaps
+    # Adding Elevation data from GoogleMaps
     G = ox.add_node_elevations(G, api_key='AIzaSyDrIKxLj0P90vzCUJ_6huBSDxiq8wYo9LM')
     G = ox.add_edge_grades(G)
-    pkl.dump(G, open("graph.pkl","wb"))
+    pkl.dump(G, open("graph.pkl", "wb"))
 
-    #projecting map on to 2D space
+    # projecting map on to 2D space
     G_proj = ox.project_graph(G)
-    pkl.dump(G_proj, open("graph_projected.pkl","wb"))
+    pkl.dump(G_proj, open("graph_projected.pkl", "wb"))
     return G_proj
+
 
 def random_points_in_bbox(latitude, longitude, distance, num_points):
     bbox = ox.bbox_from_point((latitude, longitude), distance=distance)
-    min_latitude = min(bbox[0],bbox[1])
+    min_latitude = min(bbox[0], bbox[1])
     diff_latitude = abs(bbox[0] - bbox[1])
-    min_longitude = min(bbox[2] , bbox[3])
+    min_longitude = min(bbox[2], bbox[3])
     diff_longitude = abs(bbox[2] - bbox[3])
     lat_long_pair = []
     for i in range(num_points):
@@ -68,17 +70,17 @@ def plot_results_from_dict(dic, plot_one=False, key_one=None):
             x_axis = np.arange(len(dic[key]))
             break
     fig, ax = plt.subplots()
-    # print dic
+    print dic
     for key in dic.keys():
         if key != "MAX":
             assert len_1 == len(dic[key])
             ax.plot(x_axis, dic[key], label=key)
     # ax.set_xlim((0, len_1))
-    ax.set_ylim((0, int(max_len+200)))
+    ax.set_ylim((0, int(max_len + 200)))
     plt.xticks(x_axis)
-    plt.xlabel("Num_Iterations")
+    plt.xlabel("Destination")
     plt.ylabel("Distance in m")
-    plt.ylim((0, int(max_len+1)))
+    plt.ylim((0, int(max_len + 1)))
     plt.legend()
     if not plot_one:
         plt.suptitle("Path comparison")
@@ -86,13 +88,15 @@ def plot_results_from_dict(dic, plot_one=False, key_one=None):
     else:
         plt.suptitle("Distance Graph")
         plt.savefig(key_one)
-    # plt.show()
+        # plt.show()
+
 
 def set_max(max_curr, new_val):
     if new_val > max_curr:
         return new_val
     else:
         return max_curr
+
 
 def compare_algorithms(G, G_proj, origin_lat_long, bbox_lat_long, bbox_dist, num_dest, extrapercent_travel, plot=False,
                        dump=True, dump_file="dist_dump.pkl", plot_individuals=True):
@@ -103,10 +107,10 @@ def compare_algorithms(G, G_proj, origin_lat_long, bbox_lat_long, bbox_dist, num
     shortest = []
     shortest_elev = []
     algo_dist = []
-    dic = {"Shortest_Path":[], "Least_Elevation":[], "Modified_Dijkstra":[], "DFS_1_min_elevation":[]
-        , "DFS_1_max_elevation":[], "DFS_2_min_elevation":[], "DFS_2_max_elevation":[]}
+    dic = {"Shortest_Path": [], "Least_Elevation": [], "Modified_Dijkstra": [], "DFS_1_min_elevation": []
+        , "DFS_1_max_elevation": [], "DFS_2_min_elevation": [], "DFS_2_max_elevation": []}
     for each in dest_list:
-        #Shortest
+        # Shortest
         destination = ox.get_nearest_node(G, (each[0], each[1]))
         route_actual = nx.shortest_path(G_proj, source=origin, target=destination, weight='length')
         total_actual = getTotalLength(G_proj, route_actual)
@@ -126,7 +130,8 @@ def compare_algorithms(G, G_proj, origin_lat_long, bbox_lat_long, bbox_dist, num
         max_distance_val = set_max(max_distance_val, total_cost_mod_dijkstra)
         dic["Modified_Dijkstra"].append(total_cost_mod_dijkstra)
 
-        route_minimize_elevation2, route_maximize_elevation2 = dfs_get_all_paths(G_proj, origin, destination, can_travel)
+        route_minimize_elevation2, route_maximize_elevation2 = dfs_get_all_paths(G_proj, origin, destination,
+                                                                                 can_travel)
         if len(route_minimize_elevation2) == 0:
             total_cost_dfs_gap_rmin2 = 0.0
         else:
@@ -160,18 +165,18 @@ def compare_algorithms(G, G_proj, origin_lat_long, bbox_lat_long, bbox_dist, num
         len_t = len(dic["Modified_Dijkstra"])
         for each in dic.keys():
             if len_t != len(dic[each]):
-                # print each
-                # print len(dic[each])
+                print each
+                print len(dic[each])
                 assert len_t == len(dic[each])
 
         shortest.append(total_actual)
         shortest_elev.append(total_actual_elev)
         algo_dist.append(total_cost_mod_dijkstra)
-        cost_data.append([total_actual, total_actual_elev, total_cost_mod_dijkstra, (total_cost_mod_dijkstra/total_actual_elev)*100])
+        # cost_data.append([total_actual, total_actual_elev, total_cost_mod_dijkstra, (total_cost_mod_dijkstra/total_actual_elev)*100])
         # print ("%f %f %f %f"%(total_actual, total_actual_elev, total_cost, (total_cost/total_actual_elev)*100))
     # for each in cost_data:
     #     print each
-    dic["MAX"]  = max_distance_val
+    dic["MAX"] = max_distance_val
     if dump:
         pkl.dump(dic, open(dump_file, "wb"))
 
@@ -188,11 +193,10 @@ def compare_algorithms(G, G_proj, origin_lat_long, bbox_lat_long, bbox_dist, num
                 plot_results_from_dict(temp_dict, True, each)
 
 
-
 G_proj, G = get_map()
 
 compare_algorithms(G, G_proj, origin_lat_long=[37.772, -122.434], bbox_lat_long=(37.772, -122.434),
-                   bbox_dist=500, num_dest=5, extrapercent_travel=10,plot=True)
+                   bbox_dist=500, num_dest=5, extrapercent_travel=10, plot=True)
 
 
 # # Enter Latitude and Longitude to select origin and destination
