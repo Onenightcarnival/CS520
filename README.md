@@ -28,10 +28,18 @@ conda install -c conda-forge osmnx
 Once the repository is cloned, simply go to the directory's repository and run
 
 ```
-python exp1.py
+python main.py
 ```
 
-The screen will show what to do next.
+The screen will show what to do next. It will ask for the following :
+1. Origin's Latitude and Longitude
+2. Destination's Latitude and Longitude
+3. The percentage of distance, the user is willing to travel extra over shortest path length
+4. User is trying to 'maximize' or 'minimize' the elevation.
+
+We have implemented three different algorithms to solve the above problem. Please change the strategy variable to '1' / '2' / '3'  in the main.py to try our algorithms.
+
+The output would the program would be a graph figure showing the route between origin and destination.
 
 ## Running the tests
 
