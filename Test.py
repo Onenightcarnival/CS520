@@ -268,12 +268,11 @@ def compare_algorithms(G, G_proj, origin_lat_long, bbox_lat_long, bbox_dist, num
 
 
 G_proj, G = get_map(newPlace=True)
-origin_lat = float(input("Please enter the Latitude of the Origin \n"))
-origin_long = float(input("Please enter the Longitude of the Origin \n"))
+# origin_lat = float(input("Please enter the Latitude of the Origin \n"))
+# origin_long = float(input("Please enter the Longitude of the Origin \n"))
 extratravel = int(input("Please input the extra percent travel: Make sure its an integer value\n"))
 num_dest = int(input("Please input the number of destinations you want to check: Make sure this number is an integer value\n"))
-# if type(origin_lat) is not float or type(origin_long) is not float:
-#     origin_lat = 37.772
-#     origin_long = -122.434
+origin_lat = 37.772
+origin_long = -122.434
 
 compare_algorithms(G, G_proj, origin_lat_long=[origin_lat, origin_long], bbox_lat_long=(origin_lat, origin_long), bbox_dist=500, num_dest=num_dest, extrapercent_travel=extratravel, plot=True)
