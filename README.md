@@ -48,7 +48,20 @@ Once the repository is cloned, simply go to the directory's repository and run
 ```
 python Test.py
 ```
+The Test program will take extra percent travel data and number of destinations for testing as input.
 It would generate graphs comparing total length and elevation of routes by different strategys.
+
+Modified_Dijsktra_SP_LE.png   compares Strategy 1 for distance with Shortest Path and Least Elevation
+DFS_1_max_elevation_SP_LE.png compares Strategy 2 for distance with Shortest Path and Least Elevation
+DFS_1_min_elevation_SP_LE.png compares Strategy 2 for distance with Shortest Path and Least Elevation
+DFS_2_max_elevation_SP_LE.png compares Strategy 3 for distance with Shortest Path and Least Elevation
+DFS_2_min_elevation_SP_LE.png compares Strategy 3 for distance with Shortest Path and Least Elevation
+
+Elev_Modified_Dijsktra_SP_LE.png   compares Strategy 1 for elevation with Shortest Path and Least Elevation
+Elev_DFS_1_max_elevation_SP_LE.png compares Strategy 2 for elevation with Shortest Path and Least Elevation
+Elev_DFS_1_min_elevation_SP_LE.png compares Strategy 2 for elevation with Shortest Path and Least Elevation
+Elev_DFS_2_max_elevation_SP_LE.png compares Strategy 3 for elevation with Shortest Path and Least Elevation
+Elev_DFS_2_min_elevation_SP_LE.png compares Strategy 3 for elevation with Shortest Path and Least Elevation
 
 ## Built With
 
