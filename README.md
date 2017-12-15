@@ -28,7 +28,7 @@ conda install -c conda-forge osmnx
 Once the repository is cloned, simply go to the directory's repository and run
 
 ```
-python main.py
+python Main.py
 ```
 
 The screen will show what to do next. It will ask for the following :
