@@ -43,7 +43,12 @@ The output would the program would be a graph figure showing the route between o
 
 ## Running the tests
 
-Explain how to run tests (or the graphs maybe)
+Once the repository is cloned, simply go to the directory's repository and run
+
+```
+python Test.py
+```
+It would generate graphs comparing total length and elevation of routes by different strategys.
 
 ## Built With
 
