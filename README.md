@@ -31,7 +31,7 @@ Once the repository is cloned, simply go to the directory's repository and run
 python exp1.py
 ```
 
-The screen will show what to do next. Here we have an example...
+The screen will show what to do next.
 
 ## Running the tests
 
