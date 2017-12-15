@@ -28,7 +28,7 @@ conda install -c conda-forge osmnx
 Once the repository is cloned, simply go to the directory's repository and run
 
 ```
-python Main.py
+python Main.py --strategy STRATEGY_VALUE
 ```
 
 The screen will show what to do next. It will ask for the following :
@@ -37,7 +37,11 @@ The screen will show what to do next. It will ask for the following :
 3. The percentage of distance, the user is willing to travel extra over shortest path length
 4. User is trying to 'maximize' or 'minimize' the elevation.
 
-We have implemented three different algorithms to solve the above problem. Please change the strategy variable to '1' / '2' / '3'  in the main.py to try our algorithms.
+We have implemented three different algorithms to solve the above problem. Please input the STRATEGY_VALUE [default is 1] to 1 / 2 / 3  in the main.py to try our algorithms.
+
+1 is an approximation algorithm which is the fastes and only minimizes
+2 is an exact algorithm which both maximize and minimize
+3 is another try at an exact algorithms [almost exact] which both maximizes and minimizes
 
 The output would the program would be a graph figure showing the route between origin and destination.
 
