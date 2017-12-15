@@ -5,8 +5,8 @@ from heapq import *
 from itertools import count
 import time
 from model import *
-#import cPickle as pkl
-import pickle as pkl
+import cPickle as pkl
+# import pickle as pkl
 import time
 
 ox.config(log_console=True, use_cache=True)
@@ -17,8 +17,7 @@ def get_map(place='San Francisco', newPlace=False):
         return pkl.load(open("graph_projected.pkl", "rb")), pkl.load(open("graph.pkl", "rb"))
 
     # Downloading Local map
-    place = 'San Francisco'
-    place_query = {'city': 'San Francisco', 'state': 'California', 'country': 'USA'}
+    place_query = {'city': place, 'state': 'California', 'country': 'USA'}
     G = ox.graph_from_place(place_query, network_type='drive')
 
     # Adding Elevation data from GoogleMaps
@@ -29,7 +28,7 @@ def get_map(place='San Francisco', newPlace=False):
     # projecting map on to 2D space
     G_proj = ox.project_graph(G)
     pkl.dump(G_proj, open("graph_projected.pkl", "wb"))
-    return G_proj
+    return G_proj, G
 
 
 def random_points_in_bbox(latitude, longitude, distance, num_points):
@@ -268,5 +267,13 @@ def compare_algorithms(G, G_proj, origin_lat_long, bbox_lat_long, bbox_dist, num
 
 
 
-G_proj, G = get_map()
-compare_algorithms(G, G_proj, origin_lat_long=[37.772, -122.434], bbox_lat_long=(37.772, -122.434), bbox_dist=500, num_dest=5, extrapercent_travel=10, plot=True)
+G_proj, G = get_map(newPlace=True)
+origin_lat = float(input("Please enter the Latitude of the Origin \n"))
+origin_long = float(input("Please enter the Longitude of the Origin \n"))
+extratravel = int(input("Please input the extra percent travel: Make sure its an integer value\n"))
+num_dest = int(input("Please input the number of destinations you want to check: Make sure this number is an integer value\n"))
+# if type(origin_lat) is not float or type(origin_long) is not float:
+#     origin_lat = 37.772
+#     origin_long = -122.434
+
+compare_algorithms(G, G_proj, origin_lat_long=[origin_lat, origin_long], bbox_lat_long=(origin_lat, origin_long), bbox_dist=500, num_dest=num_dest, extrapercent_travel=extratravel, plot=True)
